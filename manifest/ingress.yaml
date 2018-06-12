@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: my-blueocaean-ingress
+  namespace: gitlab
+spec:
+  rules:
+  - host: my.blue.me
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: blueocean 
+          servicePort: 80
