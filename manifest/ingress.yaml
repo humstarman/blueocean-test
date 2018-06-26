@@ -5,7 +5,7 @@ metadata:
   namespace: gitlab
 spec:
   rules:
-  - host: my.blue.me
+  - host: gmt.blue.me
     http:
       paths:
       - path: /

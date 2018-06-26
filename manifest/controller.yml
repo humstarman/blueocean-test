@@ -11,8 +11,15 @@ spec:
         component: blueocean
     spec:
       containers:
+        - name: proxy 
+          image: nginx:stable 
+          ports:
+            - containerPort: 6443 
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx
         - name: blueocean
-          image: 172.31.78.217:5000/blueocean:v1 
+          image: 192.168.100.166:5000/blueocean:v1 
           ports:
             - containerPort: 8080
           env:
@@ -39,10 +46,9 @@ spec:
               readOnly: true
             - mountPath: /root/.kube 
               name: kubectl-dir
-            - name: gluster-volume
-              mountPath: "/var/jenkins_home"
-      nodeSelector:
-        kubernetes.io/hostname: 172.31.78.216
+            #- name: gluster-volume
+              #mountPath: "/var/jenkins_home"
+              #subPath: "blueocean-dir"
       volumes:
         - name: host-time
           hostPath:
@@ -59,6 +65,9 @@ spec:
         - name: kubectl-dir
           hostPath:
             path: /root/.kube
-        - name: gluster-volume
-          persistentVolumeClaim:
-            claimName: glusterfs-pvc
+        #- name: gluster-volume
+          #persistentVolumeClaim:
+            #claimName: glusterfs-pvc
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf 
