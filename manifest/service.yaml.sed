@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: gitlab 
+  namespace: {{.namespace}} 
   labels:
-    proxy: blueocean
-  name: blueocean
+    proxy: {{.name}}
+  name: {{.name}}
 spec:
   type: ClusterIP
   ports:
@@ -12,4 +12,4 @@ spec:
     port: 80 
     targetPort: 8080
   selector:
-    component: blueocean
+    component: {{.name}}

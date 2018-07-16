@@ -1,26 +1,20 @@
 kind: Deployment 
 apiVersion: extensions/v1beta1
 metadata:
-  namespace: gitlab 
-  name: jenkins-controller
+  namespace: {{.namespace}} 
+  name: {{.name}}
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        component: jenkins
+        component: {{.name}}
     spec:
       containers:
-        - name: jenkins
-          image: 172.31.78.217:5000/jenkins-test:v1
-          command:
-            - java
-            - -jar
-            - jenkins.war
-          args:
-            - --httpPort=8080
+        - name: {{.name}}
+          image: {{.image}} 
           ports:
-            - containerPort: 8080
+            - containerPort: {{.kube-apiserver.insecure.port}}
           env:
             - name: HOST_IP
               valueFrom:
@@ -37,17 +31,14 @@ spec:
             - mountPath: /var/run/docker.sock
               name: docker-socket
               readOnly: true
-            - mountPath: /bin/docker
-              name: docker-binary
-              readOnly: true
+            #- mountPath: /bin/docker
+             # name: docker-binary
+              #readOnly: true
             - mountPath: /bin/kubectl
               name: kubectl-binary
               readOnly: true
             - mountPath: /root/.kube 
-              name: kubectl-dir
-            - name: jenkins 
-              mountPath: /root/.jenkins
-              subPath: jenkins 
+              name: kubectl-config-path
       volumes:
         - name: host-time
           hostPath:
@@ -55,15 +46,12 @@ spec:
         - name: docker-socket
           hostPath:
             path: /var/run/docker.sock
-        - name: docker-binary
-          hostPath:
-            path: /usr/local/bin/docker
+        #- name: docker-binary
+         # hostPath:
+          #  path: /usr/local/bin/docker
         - name: kubectl-binary
           hostPath:
-            path: /usr/local/bin/kubectl
-        - name: kubectl-dir
+            path: {{.kubectl.binary.path}}
+        - name: kubectl-config-path
           hostPath:
-            path: /root/.kube
-        - name: jenkins 
-          persistentVolumeClaim:
-            claimName: glusterfs-pvc
+            path: {{.kubectl.config.path}}

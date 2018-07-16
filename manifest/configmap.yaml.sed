@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: nginx-conf 
-  namespace: gitlab 
+  namespace: {{.namespace}} 
 data:
   nginx.conf: |-
     error_log stderr notice;
@@ -17,13 +17,13 @@ data:
     stream {
         upstream kube_apiserver {
             least_conn;
-            server 192.168.100.161:6443;
-            server 192.168.100.162:6443;
-            server 192.168.100.163:6443;
+            server {{.master.ip.1}}:{{.kube-apiserver.secure.port}};
+            server {{.master.ip.2}}:{{.kube-apiserver.secure.port}};
+            server {{.master.ip.3}}:{{.kube-apiserver.secure.port}};
         }
 
         server {
-            listen        0.0.0.0:6443;
+            listen        0.0.0.0:{{.kube-apiserver.secure.port}};
             proxy_pass    kube_apiserver;
             proxy_timeout 10m;
             proxy_connect_timeout 1s;
